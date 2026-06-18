@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchApiCollection, getApiEndpoint } from "../lib/api";
+import { fetchApiEndpoint } from "../lib/api";
+
+const codespaceName = String(import.meta.env.VITE_CODESPACE_NAME ?? "").trim();
+const isConfiguredCodespace =
+  codespaceName.length > 0 && codespaceName !== "your-codespace-name";
+const codespaceUsersEndpoint = `https://${codespaceName}-8000.app.github.dev/api/users/`;
+const localUsersEndpoint = "http://localhost:8000/api/users/";
+const usersEndpoint = isConfiguredCodespace
+  ? codespaceUsersEndpoint
+  : localUsersEndpoint;
 
 function Users() {
   const [state, setState] = useState({
     loading: true,
     error: "",
     items: [],
-    endpoint: getApiEndpoint("users"),
+    endpoint: usersEndpoint,
     total: 0,
   });
 
@@ -15,7 +24,7 @@ function Users() {
 
     async function load() {
       try {
-        const result = await fetchApiCollection("users");
+        const result = await fetchApiEndpoint(usersEndpoint);
         if (mounted) {
           setState({ loading: false, error: "", ...result });
         }

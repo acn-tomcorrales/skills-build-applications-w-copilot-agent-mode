@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchApiCollection, getApiEndpoint } from "../lib/api";
+import { fetchApiEndpoint } from "../lib/api";
+
+const codespaceName = String(import.meta.env.VITE_CODESPACE_NAME ?? "").trim();
+const isConfiguredCodespace =
+  codespaceName.length > 0 && codespaceName !== "your-codespace-name";
+const codespaceTeamsEndpoint = `https://${codespaceName}-8000.app.github.dev/api/teams/`;
+const localTeamsEndpoint = "http://localhost:8000/api/teams/";
+const teamsEndpoint = isConfiguredCodespace
+  ? codespaceTeamsEndpoint
+  : localTeamsEndpoint;
 
 function Teams() {
   const [state, setState] = useState({
     loading: true,
     error: "",
     items: [],
-    endpoint: getApiEndpoint("teams"),
+    endpoint: teamsEndpoint,
     total: 0,
   });
 
@@ -15,7 +24,7 @@ function Teams() {
 
     async function load() {
       try {
-        const result = await fetchApiCollection("teams");
+        const result = await fetchApiEndpoint(teamsEndpoint);
         if (mounted) {
           setState({ loading: false, error: "", ...result });
         }

@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchApiCollection, getApiEndpoint } from "../lib/api";
+import { fetchApiEndpoint } from "../lib/api";
+
+const codespaceName = String(import.meta.env.VITE_CODESPACE_NAME ?? "").trim();
+const isConfiguredCodespace =
+  codespaceName.length > 0 && codespaceName !== "your-codespace-name";
+const codespaceActivitiesEndpoint = `https://${codespaceName}-8000.app.github.dev/api/activities/`;
+const localActivitiesEndpoint = "http://localhost:8000/api/activities/";
+const activitiesEndpoint = isConfiguredCodespace
+  ? codespaceActivitiesEndpoint
+  : localActivitiesEndpoint;
 
 function Activities() {
   const [state, setState] = useState({
     loading: true,
     error: "",
     items: [],
-    endpoint: getApiEndpoint("activities"),
+    endpoint: activitiesEndpoint,
     total: 0,
   });
 
@@ -15,7 +24,7 @@ function Activities() {
 
     async function load() {
       try {
-        const result = await fetchApiCollection("activities");
+        const result = await fetchApiEndpoint(activitiesEndpoint);
         if (mounted) {
           setState({ loading: false, error: "", ...result });
         }

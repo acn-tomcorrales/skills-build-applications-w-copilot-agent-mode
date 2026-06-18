@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchApiCollection, getApiEndpoint } from "../lib/api";
+import { fetchApiEndpoint } from "../lib/api";
+
+const codespaceName = String(import.meta.env.VITE_CODESPACE_NAME ?? "").trim();
+const isConfiguredCodespace =
+  codespaceName.length > 0 && codespaceName !== "your-codespace-name";
+const codespaceLeaderboardEndpoint = `https://${codespaceName}-8000.app.github.dev/api/leaderboard/`;
+const localLeaderboardEndpoint = "http://localhost:8000/api/leaderboard/";
+const leaderboardEndpoint = isConfiguredCodespace
+  ? codespaceLeaderboardEndpoint
+  : localLeaderboardEndpoint;
 
 function Leaderboard() {
   const [state, setState] = useState({
     loading: true,
     error: "",
     items: [],
-    endpoint: getApiEndpoint("leaderboard"),
+    endpoint: leaderboardEndpoint,
     total: 0,
   });
 
@@ -15,7 +24,7 @@ function Leaderboard() {
 
     async function load() {
       try {
-        const result = await fetchApiCollection("leaderboard");
+        const result = await fetchApiEndpoint(leaderboardEndpoint);
         if (mounted) {
           setState({ loading: false, error: "", ...result });
         }

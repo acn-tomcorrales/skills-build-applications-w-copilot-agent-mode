@@ -45,8 +45,7 @@ export function getApiBaseUrl() {
   return "http://localhost:8000/api";
 }
 
-export async function fetchApiCollection(componentName) {
-  const endpoint = getApiEndpoint(componentName);
+export async function fetchApiEndpoint(endpoint) {
   let response;
 
   try {
@@ -70,4 +69,9 @@ export async function fetchApiCollection(componentName) {
     total,
     payload,
   };
+}
+
+export async function fetchApiCollection(componentName) {
+  const endpoint = getApiEndpoint(componentName);
+  return fetchApiEndpoint(endpoint);
 }
