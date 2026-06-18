@@ -7,7 +7,7 @@ const teamSchema = new Schema(
     motto: { type: String, required: true, trim: true },
     members: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export type Team = InferSchemaType<typeof teamSchema>;

@@ -6,7 +6,7 @@ const rankingSchema = new Schema(
     score: { type: Number, required: true, min: 0 },
     rank: { type: Number, required: true, min: 1 },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const leaderboardSchema = new Schema(
@@ -19,7 +19,7 @@ const leaderboardSchema = new Schema(
     periodLabel: { type: String, required: true, trim: true },
     rankings: { type: [rankingSchema], default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export type Leaderboard = InferSchemaType<typeof leaderboardSchema>;

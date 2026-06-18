@@ -13,7 +13,7 @@ const activitySchema = new Schema(
     distanceKm: { type: Number, min: 0 },
     performedAt: { type: Date, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export type Activity = InferSchemaType<typeof activitySchema>;

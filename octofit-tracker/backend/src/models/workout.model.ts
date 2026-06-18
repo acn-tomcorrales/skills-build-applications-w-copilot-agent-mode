@@ -17,7 +17,7 @@ const workoutSchema = new Schema(
     equipment: { type: [String], default: [] },
     steps: { type: [String], default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export type Workout = InferSchemaType<typeof workoutSchema>;

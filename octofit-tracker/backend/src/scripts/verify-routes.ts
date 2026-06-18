@@ -16,7 +16,7 @@ async function verifyRoutes() {
   for (const endpoint of endpoints) {
     const response = await request(app).get(endpoint).expect(200);
     console.log(
-      `${endpoint} -> count=${response.body.count}; message=${response.body.message}`
+      `${endpoint} -> count=${response.body.count}; message=${response.body.message}`,
     );
   }
 }

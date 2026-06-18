@@ -54,7 +54,7 @@ async function seedDatabase() {
 
   await UserModel.updateMany(
     { _id: { $in: users.map((user) => user._id) } },
-    { $set: { team: team._id } }
+    { $set: { team: team._id } },
   );
 
   await ActivityModel.insertMany([

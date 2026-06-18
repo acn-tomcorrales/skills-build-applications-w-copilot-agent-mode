@@ -14,7 +14,7 @@ const userSchema = new Schema(
     },
     team: { type: Schema.Types.ObjectId, ref: "Team" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export type User = InferSchemaType<typeof userSchema>;
