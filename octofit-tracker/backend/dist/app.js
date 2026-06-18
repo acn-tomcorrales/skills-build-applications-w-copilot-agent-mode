@@ -18,7 +18,25 @@ const codespaceName = process.env.CODESPACE_NAME;
 exports.apiBaseUrl = codespaceName
     ? `https://${codespaceName}-8000.app.github.dev`
     : "http://localhost:8000";
+const allowedOrigins = new Set([
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    ...(codespaceName ? [`https://${codespaceName}-5173.app.github.dev`] : []),
+]);
 exports.app.use(express_1.default.json());
+exports.app.use((request, response, next) => {
+    const origin = request.headers.origin;
+    if (origin && allowedOrigins.has(origin)) {
+        response.header("Access-Control-Allow-Origin", origin);
+        response.header("Vary", "Origin");
+    }
+    response.header("Access-Control-Allow-Methods", "GET,OPTIONS");
+    response.header("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        return response.sendStatus(204);
+    }
+    return next();
+});
 exports.app.get("/api/health", (_request, response) => {
     response.json({ status: "ok", apiBaseUrl: exports.apiBaseUrl });
 });

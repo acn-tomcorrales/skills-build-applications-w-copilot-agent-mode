@@ -1,122 +1,115 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useMemo, useState } from "react";
+import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import Activities from "./components/Activities.jsx";
+import Leaderboard from "./components/Leaderboard.jsx";
+import Teams from "./components/Teams.jsx";
+import Users from "./components/Users.jsx";
+import Workouts from "./components/Workouts.jsx";
+import { getApiBaseUrl } from "./lib/api";
+import "./App.css";
+
+const navItems = [
+  { path: "/users", label: "Users" },
+  { path: "/teams", label: "Teams" },
+  { path: "/activities", label: "Activities" },
+  { path: "/leaderboard", label: "Leaderboard" },
+  { path: "/workouts", label: "Workouts" },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
+  const healthEndpoint = `${apiBaseUrl}/health`;
+  const [healthState, setHealthState] = useState({
+    loading: true,
+    ok: false,
+    message: "Checking API...",
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkHealth() {
+      try {
+        const response = await fetch(healthEndpoint);
+
+        if (!response.ok) {
+          throw new Error(`Health check failed with status ${response.status}`);
+        }
+
+        if (mounted) {
+          setHealthState({
+            loading: false,
+            ok: true,
+            message: "API reachable",
+          });
+        }
+      } catch (error) {
+        if (mounted) {
+          setHealthState({ loading: false, ok: false, message: String(error) });
+        }
+      }
+    }
+
+    void checkHealth();
+
+    return () => {
+      mounted = false;
+    };
+  }, [healthEndpoint]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-shell bg-light min-vh-100">
+      <header className="border-bottom bg-white sticky-top">
+        <div className="container py-3">
+          <div className="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <div>
+              <h1 className="h3 mb-1">Octofit Tracker</h1>
+              <p className="mb-0 text-secondary">
+                React 19 presentation tier with Codespaces-aware API routing
+              </p>
+            </div>
+            <nav className="d-flex flex-wrap gap-2" aria-label="Primary">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `btn btn-sm ${isActive ? "btn-dark" : "btn-outline-dark"}`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+      </header>
+
+      <main className="container py-4">
+        <section
+          className={`alert ${healthState.ok ? "alert-success" : "alert-warning"}`}
+          role="status"
         >
-          Count is {count}
-        </button>
-      </section>
+          <div className="fw-semibold">API Base URL: {apiBaseUrl}</div>
+          <div>Health endpoint: {healthEndpoint}</div>
+          <div>
+            {healthState.loading
+              ? "Checking API health..."
+              : healthState.message}
+          </div>
+        </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <Routes>
+          <Route path="/" element={<Navigate to="/users" replace />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/teams" element={<Teams />} />
+          <Route path="/activities" element={<Activities />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/workouts" element={<Workouts />} />
+        </Routes>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
