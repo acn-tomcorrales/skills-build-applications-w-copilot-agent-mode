@@ -1,4 +1,4 @@
-import { app, initializeDatabase, port } from "./app";
+import { app, initializeDatabase, port } from "./server";
 
 async function startServer() {
   await initializeDatabase();

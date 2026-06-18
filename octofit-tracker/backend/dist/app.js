@@ -39,7 +39,9 @@ exports.app.get("/api/users/", async (_request, response) => {
     response.json({ message: "Users", count: items.length, items });
 });
 exports.app.get("/api/teams/", async (_request, response) => {
-    const items = await team_model_1.TeamModel.find().populate("members", "username email").lean();
+    const items = await team_model_1.TeamModel.find()
+        .populate("members", "username email")
+        .lean();
     response.json({ message: "Teams", count: items.length, items });
 });
 exports.app.get("/api/activities/", async (_request, response) => {
@@ -57,7 +59,9 @@ exports.app.get("/api/leaderboard/", async (_request, response) => {
     response.json({ message: "Leaderboard", count: items.length, items });
 });
 exports.app.get("/api/workouts/", async (_request, response) => {
-    const items = await workout_model_1.WorkoutModel.find().sort({ difficulty: 1, durationMin: 1 }).lean();
+    const items = await workout_model_1.WorkoutModel.find()
+        .sort({ difficulty: 1, durationMin: 1 })
+        .lean();
     response.json({ message: "Workouts", count: items.length, items });
 });
 async function initializeDatabase() {
